@@ -2,12 +2,25 @@ const express = require('express');
 const axios = require('axios');
 const cheerio = require('cheerio');
 const cors = require('cors');
+const rateLimit = require('express-rate-limit');
 
 const app = express();
 const PORT = 3001;
 
 app.use(express.json());
 app.use(cors());
+
+//rate limiter
+const limiter = rateLimit({
+  windowMs: 1000, 
+  // max 5 requests per second 
+  max: 5, 
+  message: "Too many requests, please try again later.",
+  standardHeaders: true, 
+  legacyHeaders: false, 
+});
+
+app.use(limiter);
 
 app.post('/fetch-metadata', async (req, res) => {
   const { urls } = req.body;
@@ -42,4 +55,3 @@ app.post('/fetch-metadata', async (req, res) => {
 app.listen(PORT, () => {
   console.log(`Server is running on port ${PORT}`);
 });
-

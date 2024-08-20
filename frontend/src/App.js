@@ -26,7 +26,11 @@ function App() {
       const response = await axios.post('http://localhost:3001/fetch-metadata', { urls });
       setResults(response.data);
     } catch (error) {
-      setError('Failed to fetch metadata. Please try again.');
+      if (error.response && error.response.status === 429) {
+        setError('Rate limit exceeded. Please wait a moment before trying again.');
+      } else {
+        setError('Failed to fetch metadata. Please try again.');
+      }
     } finally {
       setLoading(false);
     }
